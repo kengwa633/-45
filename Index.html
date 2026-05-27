@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Bus Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div id="loginBox" class="container">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Enter Username">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- MAIN SYSTEM -->
+    <div id="mainSystem" class="container" style="display:none;">
+        <h1 class="title">Bus Booking System</h1>
+
+        <div class="bus-list">
+            <button onclick="selectBus('AN CLASSIC')">AN CLASSIC</button>
+            <button onclick="selectBus('ADVENTURE')">ADVENTURE</button>
+            <button onclick="selectBus('SARATOGA')">SARATOGA</button>
+            <button onclick="selectBus('YEHOVA YIRE')">YEHOVA YIRE</button>
+            <button onclick="selectBus('TAKBIR')">TAKBIR</button>
+            <button onclick="selectBus('ABOOD')">ABOOD</button>
+            <button onclick="selectBus('ALLY STAR')">ALLY STAR</button>
+            <button onclick="selectBus('NBS')">NBS</button>
+        </div>
+
+        <h2 id="selectedBus"></h2>
+
+        <!-- Seats -->
+        <div class="seats" id="seats"></div>
+
+        <!-- Payment -->
+        <button onclick="payNow()">Pay Now</button>
+
+        <div id="result"></div>
+    </div>
+
+    <!-- Animation -->
+    <div class="bus-animation">
+        <span>🚍</span>
+        <span>🚌</span>
+        <span>🚐</span>
+    </div>
+
+    <footer>
+        <p>Developed by <strong>Kengwa Piter Janson</strong></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    text-align: center;
+    color: white;
+}
+
+.container {
+    margin-top: 60px;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 20px;
+    border: none;
+    background: #00c6ff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: gold;
+    transform: scale(1.1);
+}
+
+/* Seats */
+.seats {
+    display: grid;
+    grid-template-columns: repeat(5, 50px);
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    background: white;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.selected {
+    background: limegreen;
+}
+
+.bus-animation span {
+    position: absolute;
+    bottom: -50px;
+    font-size: 40px;
+    animation: floatBus 10s infinite;
+}
+
+@keyframes floatBus {
+    0% {transform: translateY(0); opacity:0;}
+    50% {opacity:1;}
+    100% {transform: translateY(-600px); opacity:0;}
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: black;
+}
