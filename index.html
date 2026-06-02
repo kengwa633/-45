@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absalom Family Bus Booking - Premium Travel</title>
+    <title>$%45 Family Online Bus Booking Services - Premium Travel</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
@@ -19,8 +19,8 @@
         <section id="loginSection" class="section active">
             <div class="login-container">
                 <div class="logo-banner">
-                    <h1>🚌 Absalom Family Bus Booking</h1>
-                    <p>Premium Travel Experience</p>
+                    <h1>🚌 $%45 Family Online Bus Booking Services</h1>
+                    <p>Premium Travel Experience Across Tanzania</p>
                 </div>
 
                 <div class="login-card">
@@ -28,30 +28,67 @@
                     <form onsubmit="app.handleLogin(event)">
                         <div class="form-group">
                             <label for="username">Full Name</label>
-                            <input 
-                                type="text" 
-                                id="username" 
-                                class="input-field"
-                                placeholder="Enter your full name"
-                                required>
+                            <input type="text" id="username" class="input-field" placeholder="Enter your full name" required>
                         </div>
-
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                class="input-field"
-                                placeholder="Enter your email"
-                                required>
+                            <input type="email" id="email" class="input-field" placeholder="Enter your email" required>
                         </div>
-
                         <button type="submit" class="btn btn-primary btn-large">Login to Book</button>
                     </form>
                 </div>
 
                 <div class="footer-text">
-                    <p>Trusted by thousands of travelers</p>
+                    <p>Trusted by thousands of travelers across Tanzania</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROUTE SELECTION SECTION -->
+        <section id="routeSection" class="section">
+            <div class="route-banner">
+                <h1>📍 Plan Your Journey Now!</h1>
+                <p>Explore Tanzania with Our Premium Bus Services</p>
+            </div>
+
+            <div class="route-container">
+                <div class="route-card">
+                    <h2>Search Buses</h2>
+                    <form onsubmit="app.searchBuses(event)">
+                        <!-- FROM LOCATION -->
+                        <div class="form-group">
+                            <label for="fromLocation">From</label>
+                            <select id="fromLocation" class="input-field" required>
+                                <option value="">Select departure city...</option>
+                            </select>
+                        </div>
+
+                        <!-- TO LOCATION -->
+                        <div class="form-group">
+                            <label for="toLocation">To</label>
+                            <select id="toLocation" class="input-field" required>
+                                <option value="">Select destination city...</option>
+                            </select>
+                        </div>
+
+                        <!-- TRAVEL DATE -->
+                        <div class="form-group">
+                            <label for="travelDate">Travel Date</label>
+                            <input type="date" id="travelDate" class="input-field" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">🔍 Search Buses</button>
+                    </form>
+                </div>
+
+                <!-- AVAILABLE BUSES -->
+                <div id="busesResultsCard" class="route-card hidden">
+                    <h2>Available Buses</h2>
+                    <div class="route-info">
+                        <p><strong>Route:</strong> <span id="routeInfo"></span></p>
+                        <p><strong>Date:</strong> <span id="dateInfo"></span></p>
+                    </div>
+                    <div id="busesResults" class="buses-list"></div>
                 </div>
             </div>
         </section>
@@ -61,8 +98,8 @@
             <!-- Header -->
             <header class="app-header">
                 <div class="header-content">
-                    <h1>Bus Selection</h1>
-                    <button class="btn btn-secondary btn-small" onclick="app.logout()">Logout</button>
+                    <h1>Select Your Seat</h1>
+                    <button class="btn btn-secondary btn-small" onclick="app.backToRoute()">Back to Routes</button>
                 </div>
                 <div class="user-info">
                     <span id="userDisplay"></span>
@@ -71,25 +108,41 @@
 
             <!-- BUS SELECTION -->
             <div class="booking-container">
-                <div class="section-card">
-                    <h2>Choose Your Bus</h2>
-                    <div id="busGrid" class="bus-grid">
-                        <!-- Generated by JavaScript -->
-                    </div>
-                </div>
-
                 <!-- SELECTED BUS INFO -->
-                <div id="busInfoCard" class="section-card hidden">
+                <div id="busInfoCard" class="section-card">
                     <h2 id="selectedBusTitle"></h2>
                     <div class="bus-info-content">
-                        <p><strong>Bus Type:</strong> <span id="busType"></span></p>
-                        <p><strong>Capacity:</strong> <span id="busCapacity"></span> seats</p>
-                        <p><strong>Price:</strong> <span id="busPrice"></span></p>
+                        <div class="bus-info-grid">
+                            <div class="info-item">
+                                <strong>Bus Type:</strong>
+                                <span id="busType"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Route:</strong>
+                                <span id="busRoute"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Departure:</strong>
+                                <span id="busDepart"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Arrival:</strong>
+                                <span id="busArrival"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Duration:</strong>
+                                <span id="busDuration"></span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Price:</strong>
+                                <span id="busPrice" class="price-highlight"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- SEAT SELECTION -->
-                <div id="seatSection" class="section-card hidden">
+                <div id="seatSection" class="section-card">
                     <h2>Select Your Seat</h2>
                     <div class="seat-legend">
                         <div class="legend-item">
@@ -105,9 +158,7 @@
                             <span>Booked</span>
                         </div>
                     </div>
-                    <div id="seatsContainer" class="seats-grid">
-                        <!-- Generated by JavaScript -->
-                    </div>
+                    <div id="seatsContainer" class="seats-grid"></div>
                 </div>
 
                 <!-- BOOKING SUMMARY -->
@@ -115,12 +166,24 @@
                     <h2>Booking Summary</h2>
                     <div class="summary-content">
                         <div class="summary-row">
+                            <span>Passenger:</span>
+                            <strong id="summaryPassenger"></strong>
+                        </div>
+                        <div class="summary-row">
                             <span>Bus:</span>
                             <strong id="summaryBus"></strong>
                         </div>
                         <div class="summary-row">
+                            <span>Route:</span>
+                            <strong id="summaryRoute"></strong>
+                        </div>
+                        <div class="summary-row">
                             <span>Seat:</span>
                             <strong id="summarySeat"></strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Date:</span>
+                            <strong id="summaryDate"></strong>
                         </div>
                         <div class="summary-row">
                             <span>Price:</span>
@@ -130,9 +193,7 @@
                             <span>Total:</span>
                             <strong id="summaryTotal"></strong>
                         </div>
-                        <button class="btn btn-primary btn-large" onclick="app.proceedToPayment()">
-                            Proceed to Payment
-                        </button>
+                        <button class="btn btn-primary btn-large" onclick="app.proceedToPayment()">Proceed to Payment</button>
                     </div>
                 </div>
 
@@ -144,12 +205,10 @@
                             <label for="cardName">Cardholder Name</label>
                             <input type="text" id="cardName" class="input-field" required>
                         </div>
-
                         <div class="form-group">
                             <label for="cardNumber">Card Number</label>
                             <input type="text" id="cardNumber" class="input-field" placeholder="1234 5678 9012 3456" required>
                         </div>
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="cardExpiry">Expiry</label>
@@ -160,7 +219,6 @@
                                 <input type="text" id="cardCVV" class="input-field" placeholder="123" required>
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary btn-large">Complete Payment</button>
                     </form>
                 </div>
@@ -175,7 +233,9 @@
                 <div class="confirmation-details">
                     <p><strong>Passenger:</strong> <span id="confirmName"></span></p>
                     <p><strong>Bus:</strong> <span id="confirmBus"></span></p>
+                    <p><strong>Route:</strong> <span id="confirmRoute"></span></p>
                     <p><strong>Seat:</strong> <span id="confirmSeat"></span></p>
+                    <p><strong>Date:</strong> <span id="confirmDate"></span></p>
                     <p><strong>Reference:</strong> <span id="confirmRef"></span></p>
                 </div>
                 <button class="btn btn-primary btn-large" onclick="app.restart()">Book Another Ticket</button>

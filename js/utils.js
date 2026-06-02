@@ -90,7 +90,7 @@ const Utils = {
      * @returns {string}
      */
     generateReference() {
-        return `ABF-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        return `S45-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     },
 
     /**
@@ -232,12 +232,12 @@ const Utils = {
     },
 
     /**
-     * Find bus by name
-     * @param {string} busName - Bus name
+     * Find bus by ID
+     * @param {number} busId - Bus ID
      * @returns {Object|null}
      */
-    findBus(busName) {
-        return CONFIG.buses.find(bus => bus.name === busName) || null;
+    findBusById(busId) {
+        return CONFIG.buses.find(bus => bus.id === busId) || null;
     },
 
     /**
@@ -259,6 +259,35 @@ const Utils = {
         const cleaned = cardNumber.replace(/\s/g, '');
         const last4 = cleaned.slice(-4);
         return `**** **** **** ${last4}`;
+    },
+
+    /**
+     * Calculate journey duration
+     * @param {string} from - Departure time
+     * @param {string} to - Arrival time
+     * @returns {string}
+     */
+    calculateDuration(from, to) {
+        const [fromHour, fromMin] = from.split(':').map(Number);
+        const [toHour, toMin] = to.split(':').map(Number);
+        
+        let duration = (toHour - fromHour) * 60 + (toMin - fromMin);
+        if (duration < 0) duration += 24 * 60;
+        
+        const hours = Math.floor(duration / 60);
+        const minutes = duration % 60;
+        
+        return `${hours}h ${minutes}m`;
+    },
+
+    /**
+     * Format date for display
+     * @param {string} date - Date string (YYYY-MM-DD)
+     * @returns {string}
+     */
+    formatDate(date) {
+        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+        return new Date(date + 'T00:00:00').toLocaleDateString('en-US', options);
     }
 };
 

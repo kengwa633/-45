@@ -12,6 +12,11 @@ const app = {
             name: '',
             email: ''
         },
+        route: {
+            from: '',
+            to: '',
+            date: ''
+        },
         booking: {
             busId: null,
             busName: '',
@@ -27,20 +32,52 @@ const app = {
      */
     init() {
         Utils.log('Initializing application...', 'info');
-        this.renderBuses();
+        this.populateLocationSelects();
+        this.setMinDate();
         this.attachEventListeners();
+    },
+
+    /**
+     * Set minimum date to today
+     */
+    setMinDate() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = Utils.getElement('travelDate');
+        if (dateInput) dateInput.min = today;
+    },
+
+    /**
+     * Populate location select dropdowns
+     */
+    populateLocationSelects() {
+        const fromSelect = Utils.getElement('fromLocation');
+        const toSelect = Utils.getElement('toLocation');
+
+        CONFIG.locations.forEach(location => {
+            // From location
+            const optionFrom = document.createElement('option');
+            optionFrom.value = location.name;
+            optionFrom.textContent = `${location.name} (${location.region})`;
+            fromSelect.appendChild(optionFrom);
+
+            // To location
+            const optionTo = document.createElement('option');
+            optionTo.value = location.name;
+            optionTo.textContent = `${location.name} (${location.region})`;
+            toSelect.appendChild(optionTo);
+        });
+
+        Utils.log('Location selects populated', 'info');
     },
 
     /**
      * Attach global event listeners
      */
     attachEventListeners() {
-        // Close loader when page loads
         window.addEventListener('load', () => {
             Utils.hideLoader();
         });
 
-        // Enter key on form fields
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 if (e.target.id === 'username' || e.target.id === 'email') {
@@ -52,7 +89,6 @@ const app = {
 
     /**
      * Handle login
-     * @param {Event} event - Form submit event
      */
     handleLogin(event) {
         event.preventDefault();
@@ -60,7 +96,6 @@ const app = {
         const name = Utils.getInputValue('username');
         const email = Utils.getInputValue('email');
 
-        // Validation
         if (!Utils.isValidName(name)) {
             Utils.showToast(CONFIG.messages.loginRequired, 'error');
             return;
@@ -71,76 +106,131 @@ const app = {
             return;
         }
 
-        // Save user data
         this.state.user.name = name;
         this.state.user.email = email;
 
         Utils.log(`User logged in: ${name}`, 'info');
-
-        // Update UI
         Utils.setText('userDisplay', `👤 ${name}`);
-
-        // Show main system
-        Utils.showSection('bookingSection');
+        Utils.showSection('routeSection');
         Utils.showToast(`Welcome, ${name}!`, 'success');
     },
 
     /**
-     * Render bus selection grid
+     * Search buses for selected route
      */
-    renderBuses() {
-        const busGrid = Utils.getElement('busGrid');
-        if (!busGrid) return;
+    searchBuses(event) {
+        event.preventDefault();
 
-        busGrid.innerHTML = '';
+        const from = Utils.getInputValue('fromLocation');
+        const to = Utils.getInputValue('toLocation');
+        const date = Utils.getInputValue('travelDate');
 
-        CONFIG.buses.forEach(bus => {
-            const busCard = document.createElement('div');
-            busCard.className = 'bus-card';
-            busCard.innerHTML = `
-                <h3>${bus.name}</h3>
-                <p><strong>${bus.type}</strong></p>
-                <p>👥 ${bus.capacity} seats</p>
-                <p class="price-highlight">${Utils.formatCurrency(bus.price)}</p>
+        if (!from || !to) {
+            Utils.showToast(CONFIG.messages.routeRequired, 'error');
+            return;
+        }
+
+        if (from === to) {
+            Utils.showToast(CONFIG.messages.sameCityError, 'error');
+            return;
+        }
+
+        if (!date) {
+            Utils.showToast(CONFIG.messages.dateRequired, 'error');
+            return;
+        }
+
+        this.state.route.from = from;
+        this.state.route.to = to;
+        this.state.route.date = date;
+
+        this.displayAvailableBuses(from, to, date);
+        Utils.log(`Route search: ${from} to ${to} on ${date}`, 'info');
+    },
+
+    /**
+     * Display available buses for route
+     */
+    displayAvailableBuses(from, to, date) {
+        const filteredBuses = CONFIG.buses.filter(bus => 
+            bus.from === from && bus.to === to
+        );
+
+        if (filteredBuses.length === 0) {
+            Utils.showToast(CONFIG.messages.noBusesFound, 'warning');
+            Utils.toggleElement('busesResultsCard', false);
+            return;
+        }
+
+        Utils.toggleElement('busesResultsCard', true);
+        Utils.setText('routeInfo', `${from} → ${to}`);
+        Utils.setText('dateInfo', Utils.formatDate(date));
+
+        const busesResults = Utils.getElement('busesResults');
+        busesResults.innerHTML = '';
+
+        filteredBuses.forEach(bus => {
+            const busItem = document.createElement('div');
+            busItem.className = 'bus-result-card';
+            const duration = Utils.calculateDuration(bus.departureTime, bus.arrivalTime);
+            
+            busItem.innerHTML = `
+                <div class="bus-result-header">
+                    <h3>${bus.name}</h3>
+                    <span class="bus-type-badge">${bus.type}</span>
+                </div>
+                <div class="bus-result-details">
+                    <div class="time-info">
+                        <div class="time-item">
+                            <span class="time-label">Departure</span>
+                            <span class="time-value">${bus.departureTime}</span>
+                        </div>
+                        <div class="time-arrow">→</div>
+                        <div class="time-item">
+                            <span class="time-label">Arrival</span>
+                            <span class="time-value">${bus.arrivalTime}</span>
+                        </div>
+                        <div class="time-item">
+                            <span class="time-label">Duration</span>
+                            <span class="time-value">${duration}</span>
+                        </div>
+                    </div>
+                    <div class="availability-info">
+                        <span class="seats-available">👥 ${bus.availableSeats}/${bus.capacity} Seats Available</span>
+                        <span class="price">${Utils.formatCurrency(bus.price)}</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="app.selectBus(${bus.id}, '${date}')">Select</button>
             `;
 
-            busCard.addEventListener('click', () => this.selectBus(bus));
-            busGrid.appendChild(busCard);
+            busesResults.appendChild(busItem);
         });
 
-        Utils.log('Buses rendered', 'info');
+        Utils.showToast(`Found ${filteredBuses.length} bus(es)`, 'success');
     },
 
     /**
      * Select a bus
-     * @param {Object} bus - Bus object
      */
-    selectBus(bus) {
-        // Update state
+    selectBus(busId, date) {
+        const bus = Utils.findBusById(busId);
+        if (!bus) return;
+
         this.state.booking.busId = bus.id;
         this.state.booking.busName = bus.name;
         this.state.booking.price = bus.price;
 
-        // Update UI
-        Utils.setText('selectedBusTitle', `You selected: ${bus.name}`);
+        Utils.setText('selectedBusTitle', `${bus.name}`);
         Utils.setText('busType', bus.type);
-        Utils.setText('busCapacity', bus.capacity);
+        Utils.setText('busRoute', `${bus.from} → ${bus.to}`);
+        Utils.setText('busDepart', bus.departureTime);
+        Utils.setText('busArrival', bus.arrivalTime);
+        const duration = Utils.calculateDuration(bus.departureTime, bus.arrivalTime);
+        Utils.setText('busDuration', duration);
         Utils.setText('busPrice', Utils.formatCurrency(bus.price));
 
-        // Show bus info and seat section
-        Utils.toggleElement('busInfoCard', true);
-        Utils.toggleElement('seatSection', true);
-        Utils.toggleElement('summaryCard', false);
-        Utils.toggleElement('paymentSection', false);
-
-        // Highlight selected bus
-        document.querySelectorAll('.bus-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        event.target.closest('.bus-card').classList.add('selected');
-
-        // Render seats
         this.renderSeats(bus);
+        Utils.showSection('bookingSection');
 
         Utils.log(`Bus selected: ${bus.name}`, 'info');
         Utils.showToast(`${bus.name} selected`, 'success');
@@ -148,7 +238,6 @@ const app = {
 
     /**
      * Render seats for selected bus
-     * @param {Object} bus - Bus object
      */
     renderSeats(bus) {
         const seatsContainer = Utils.getElement('seatsContainer');
@@ -175,20 +264,15 @@ const app = {
 
     /**
      * Select a seat
-     * @param {number} seatNumber - Seat number
-     * @param {Object} bus - Bus object
      */
     selectSeat(seatNumber, bus) {
-        // Update state
         this.state.booking.seatNumber = seatNumber;
 
-        // Update seat selection UI
         document.querySelectorAll('.seat').forEach(seat => {
             seat.classList.remove('seat-selected');
         });
         event.target.classList.add('seat-selected');
 
-        // Update summary
         this.updateSummary();
 
         Utils.log(`Seat ${seatNumber} selected`, 'info');
@@ -200,13 +284,17 @@ const app = {
      */
     updateSummary() {
         const summary = this.state.booking;
+        const user = this.state.user;
+        const route = this.state.route;
 
+        Utils.setText('summaryPassenger', user.name);
         Utils.setText('summaryBus', summary.busName);
+        Utils.setText('summaryRoute', `${route.from} → ${route.to}`);
         Utils.setText('summarySeat', `Seat ${summary.seatNumber}`);
+        Utils.setText('summaryDate', Utils.formatDate(route.date));
         Utils.setText('summaryPrice', Utils.formatCurrency(summary.price));
         Utils.setText('summaryTotal', Utils.formatCurrency(summary.price));
 
-        // Show summary card
         Utils.toggleElement('summaryCard', true);
     },
 
@@ -219,7 +307,6 @@ const app = {
             return;
         }
 
-        // Hide summary, show payment
         Utils.toggleElement('summaryCard', false);
         Utils.toggleElement('paymentSection', true);
 
@@ -229,7 +316,6 @@ const app = {
 
     /**
      * Process payment
-     * @param {Event} event - Form submit event
      */
     processPayment(event) {
         event.preventDefault();
@@ -241,7 +327,6 @@ const app = {
         const cardExpiry = Utils.getInputValue('cardExpiry');
         const cardCVV = Utils.getInputValue('cardCVV');
 
-        // Validation
         if (!cardName) {
             Utils.showToast('Please enter cardholder name', 'error');
             return;
@@ -262,12 +347,10 @@ const app = {
             return;
         }
 
-        // Process payment
         this.state.isProcessing = true;
         Utils.showLoader();
         Utils.showToast(CONFIG.messages.paymentProcessing, 'warning');
 
-        // Simulate payment processing
         setTimeout(() => {
             this.completeBooking();
             this.state.isProcessing = false;
@@ -276,31 +359,32 @@ const app = {
     },
 
     /**
-     * Complete booking and show confirmation
+     * Complete booking
      */
     completeBooking() {
         const booking = this.state.booking;
         const user = this.state.user;
+        const route = this.state.route;
 
-        // Generate reference
         booking.reference = Utils.generateReference();
 
-        // Update confirmation UI
         Utils.setText('confirmName', user.name);
         Utils.setText('confirmBus', booking.busName);
+        Utils.setText('confirmRoute', `${route.from} → ${route.to}`);
         Utils.setText('confirmSeat', `Seat ${booking.seatNumber}`);
+        Utils.setText('confirmDate', Utils.formatDate(route.date));
         Utils.setText('confirmRef', booking.reference);
 
-        // Show confirmation section
         Utils.showSection('confirmationSection');
 
         Utils.log(`Booking completed: ${booking.reference}`, 'info');
         Utils.showToast(CONFIG.messages.bookingSuccess, 'success');
 
-        // Log booking details
         console.table({
             'Name': user.name,
             'Email': user.email,
+            'Route': `${route.from} → ${route.to}`,
+            'Date': route.date,
             'Bus': booking.busName,
             'Seat': booking.seatNumber,
             'Price': `${CONFIG.currencySymbol} ${booking.price}`,
@@ -309,36 +393,40 @@ const app = {
     },
 
     /**
+     * Back to route selection
+     */
+    backToRoute() {
+        this.state.booking = {
+            busId: null,
+            busName: '',
+            seatNumber: null,
+            price: 0,
+            reference: ''
+        };
+
+        Utils.clearInputs(['cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
+        Utils.toggleElement('summaryCard', false);
+        Utils.toggleElement('paymentSection', false);
+        Utils.showSection('routeSection');
+        Utils.showToast('Back to route selection', 'success');
+    },
+
+    /**
      * Restart booking process
      */
     restart() {
-        // Reset state
         this.state = {
             user: this.state.user,
-            booking: {
-                busId: null,
-                busName: '',
-                seatNumber: null,
-                price: 0,
-                reference: ''
-            },
+            route: { from: '', to: '', date: '' },
+            booking: { busId: null, busName: '', seatNumber: null, price: 0, reference: '' },
             isProcessing: false
         };
 
-        // Clear forms
-        Utils.clearInputs(['cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
-
-        // Reset UI
-        Utils.toggleElement('busInfoCard', false);
-        Utils.toggleElement('seatSection', false);
+        Utils.clearInputs(['fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
+        Utils.toggleElement('busesResultsCard', false);
         Utils.toggleElement('summaryCard', false);
         Utils.toggleElement('paymentSection', false);
-
-        // Show booking section
-        Utils.showSection('bookingSection');
-        this.renderBuses();
-
-        Utils.log('Booking restarted', 'info');
+        Utils.showSection('routeSection');
         Utils.showToast('Ready to book another ticket', 'success');
     },
 
@@ -347,25 +435,15 @@ const app = {
      */
     logout() {
         if (confirm('Are you sure you want to logout?')) {
-            // Reset all state
             this.state = {
                 user: { name: '', email: '' },
-                booking: {
-                    busId: null,
-                    busName: '',
-                    seatNumber: null,
-                    price: 0,
-                    reference: ''
-                },
+                route: { from: '', to: '', date: '' },
+                booking: { busId: null, busName: '', seatNumber: null, price: 0, reference: '' },
                 isProcessing: false
             };
 
-            // Clear all inputs
-            Utils.clearInputs(['username', 'email', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
-
-            // Show login section
+            Utils.clearInputs(['username', 'email', 'fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
             Utils.showSection('loginSection');
-
             Utils.log('User logged out', 'info');
             Utils.showToast('Logged out successfully', 'success');
         }
