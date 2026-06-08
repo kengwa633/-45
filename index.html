@@ -40,6 +40,7 @@
 
                 <div class="footer-text">
                     <p>Trusted by thousands of travelers across Tanzania</p>
+                    <p style="font-size: 0.8rem; margin-top: 20px;">Developed by <strong>Kengwa Piter Janson</strong></p>
                 </div>
             </div>
         </section>
@@ -199,28 +200,73 @@
 
                 <!-- PAYMENT SECTION -->
                 <div id="paymentSection" class="section-card hidden">
-                    <h2>Payment Details</h2>
-                    <form onsubmit="app.processPayment(event)">
-                        <div class="form-group">
-                            <label for="cardName">Cardholder Name</label>
-                            <input type="text" id="cardName" class="input-field" required>
+                    <h2>💳 Payment Details</h2>
+                    
+                    <h3 style="color: #333; text-align: center; margin: 20px 0;">Choose Payment Method</h3>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="app.selectPaymentMethod('card', this)">
+                            <div class="payment-method-icon">💳</div>
+                            <div class="payment-method-name">Credit Card</div>
+                            <div class="payment-method-desc">Visa / Mastercard</div>
                         </div>
-                        <div class="form-group">
-                            <label for="cardNumber">Card Number</label>
-                            <input type="text" id="cardNumber" class="input-field" placeholder="1234 5678 9012 3456" required>
+                        <div class="payment-method" onclick="app.selectPaymentMethod('mpesa', this)">
+                            <div class="payment-method-icon">📱</div>
+                            <div class="payment-method-name">M-Pesa</div>
+                            <div class="payment-method-desc">Vodacom Tanzania</div>
                         </div>
-                        <div class="form-row">
+                        <div class="payment-method" onclick="app.selectPaymentMethod('tigopesa', this)">
+                            <div class="payment-method-icon">📞</div>
+                            <div class="payment-method-name">Tigo Pesa</div>
+                            <div class="payment-method-desc">Tigo Tanzania</div>
+                        </div>
+                        <div class="payment-method" onclick="app.selectPaymentMethod('airtel', this)">
+                            <div class="payment-method-icon">🌐</div>
+                            <div class="payment-method-name">Airtel Money</div>
+                            <div class="payment-method-desc">Airtel Tanzania</div>
+                        </div>
+                    </div>
+
+                    <!-- CREDIT CARD FORM -->
+                    <div id="cardFormContainer" class="card-form">
+                        <h3>Enter Card Details</h3>
+                        <form onsubmit="app.processPayment(event)">
                             <div class="form-group">
-                                <label for="cardExpiry">Expiry</label>
-                                <input type="text" id="cardExpiry" class="input-field" placeholder="MM/YY" required>
+                                <label for="cardName">Cardholder Name</label>
+                                <input type="text" id="cardName" class="input-field" placeholder="John Doe" required>
                             </div>
                             <div class="form-group">
-                                <label for="cardCVV">CVV</label>
-                                <input type="text" id="cardCVV" class="input-field" placeholder="123" required>
+                                <label for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" class="input-field" placeholder="1234 5678 9012 3456" required>
                             </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-large">Complete Payment</button>
-                    </form>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cardExpiry">Expiry (MM/YY)</label>
+                                    <input type="text" id="cardExpiry" class="input-field" placeholder="12/25" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardCVV">CVV</label>
+                                    <input type="text" id="cardCVV" class="input-field" placeholder="123" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">Complete Payment</button>
+                        </form>
+                    </div>
+
+                    <!-- MOBILE MONEY FORM -->
+                    <div id="mobileMoneyFormContainer" class="card-form hidden">
+                        <h3 id="mobileMoneyTitle">Enter Phone Number</h3>
+                        <form onsubmit="app.processPayment(event)">
+                            <div class="form-group">
+                                <label for="mobilePhone">Phone Number</label>
+                                <input type="tel" id="mobilePhone" class="input-field" placeholder="0657123456" required>
+                            </div>
+                            <p style="color: #666; font-size: 0.9rem; text-align: center; margin: 15px 0;">
+                                You will receive a prompt on your phone to confirm the payment.
+                            </p>
+                            <button type="submit" class="btn btn-primary btn-large">Complete Payment</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>
@@ -239,6 +285,9 @@
                     <p><strong>Reference:</strong> <span id="confirmRef"></span></p>
                 </div>
                 <button class="btn btn-primary btn-large" onclick="app.restart()">Book Another Ticket</button>
+                <div class="developer-credit">
+                    Developed by <strong>Kengwa Piter Janson</strong>
+                </div>
             </div>
         </section>
 

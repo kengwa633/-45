@@ -23,7 +23,11 @@ A modern, fully-featured bus booking system built with clean architecture, separ
 - 20 seats per bus
 
 💳 **Payment Processing**
-- Credit card payment form
+- Multiple payment methods:
+  - **Credit/Debit Card** (Visa, Mastercard)
+  - **M-Pesa** (Vodacom Tanzania)
+  - **Tigo Pesa** (Tigo Tanzania)
+  - **Airtel Money** (Airtel Tanzania)
 - Card validation (number, expiry, CVV)
 - Secure payment simulation
 - Payment confirmation
@@ -77,6 +81,8 @@ project/
 - Responsive layout
 - Component styles
 - Animations
+- Centered content
+- Payment method selection UI
 
 ## Technologies Used
 
@@ -123,6 +129,14 @@ app.state = {
 - Breakpoints: 768px, 480px
 - Touch-friendly interface
 - Accessibility features
+- Centered content for better UX
+
+### 5. **Tanzanian Payment Integration**
+Support for popular payment methods used by Tanzanian businesses:
+- **M-Pesa** - Vodacom's mobile money service
+- **Tigo Pesa** - Tigo's mobile money service
+- **Airtel Money** - Airtel's mobile money service
+- **Credit Card** - International payment option
 
 ## Usage
 
@@ -147,7 +161,7 @@ app.state = {
 
 5. **Review & Pay**
    - Review booking summary
-   - Enter payment details
+   - Choose your preferred payment method
    - Complete payment
 
 6. **Confirmation**
@@ -177,11 +191,13 @@ app.state = {
 - Single Responsibility Principle
 
 ✅ **User Experience**
+- Centered content for better readability
 - Toast notifications for feedback
 - Loading states
 - Form validation
 - Smooth animations
 - Responsive design
+- Clear payment method options
 
 ✅ **Performance**
 - Minimal DOM operations
@@ -213,6 +229,8 @@ app.state = {
 - Email confirmation
 - QR code tickets
 - Admin dashboard
+- SMS notifications
+- Integration with actual mobile money APIs
 
 ## License
 
@@ -220,5 +238,5 @@ Developed by **Kengwa Piter Janson**
 
 ---
 
-**Version:** 2.0 (Refactored with separation of concerns)
-**Last Updated:** May 28, 2026
+**Version:** 2.1 (Enhanced with Tanzanian payment methods and improved UI)
+**Last Updated:** June 8, 2026

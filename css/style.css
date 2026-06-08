@@ -67,6 +67,7 @@ body {
 .login-container {
     width: 100%;
     max-width: 500px;
+    margin: 0 auto;
 }
 
 .logo-banner {
@@ -91,6 +92,7 @@ body {
     border-radius: 15px;
     padding: 40px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
 }
 
 .login-card h2 {
@@ -107,6 +109,72 @@ body {
 }
 
 /* ============================================
+   ROUTE SECTION
+   ============================================ */
+
+#routeSection {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.route-banner {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.route-banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.route-banner p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.route-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.route-card {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    text-align: center;
+}
+
+.route-card h2 {
+    color: #667eea;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.route-info {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.buses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* ============================================
    APP HEADER
    ============================================ */
 
@@ -114,6 +182,7 @@ body {
     background: white;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .header-content {
@@ -121,17 +190,23 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .header-content h1 {
     color: #667eea;
     font-size: 1.8rem;
+    flex: 1;
+    text-align: center;
+    min-width: 200px;
 }
 
 .user-info {
     color: #666;
     font-size: 0.95rem;
     padding: 10px 0;
+    text-align: center;
 }
 
 /* ============================================
@@ -145,7 +220,7 @@ body {
 }
 
 .booking-container {
-    max-width: 1200px;
+    max-width: 900px;
     width: 100%;
     margin: 0 auto;
     padding: 20px;
@@ -162,6 +237,7 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     animation: slideUp 0.3s ease-out;
+    text-align: center;
 }
 
 .section-card.hidden {
@@ -193,6 +269,7 @@ body {
 
 .form-group {
     margin-bottom: 20px;
+    text-align: left;
 }
 
 .form-group label {
@@ -243,6 +320,7 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    width: 100%;
 }
 
 .btn-primary:hover {
@@ -283,6 +361,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     margin-top: 20px;
+    justify-items: center;
 }
 
 .bus-card {
@@ -294,6 +373,8 @@ body {
     transition: all 0.3s ease;
     border: 3px solid transparent;
     text-align: center;
+    width: 100%;
+    max-width: 200px;
 }
 
 .bus-card:hover {
@@ -327,6 +408,26 @@ body {
 .bus-info-content p {
     margin: 10px 0;
     color: #333;
+}
+
+.bus-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.info-item {
+    background: #f0f0f0;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.price-highlight {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
 /* ============================================
@@ -401,6 +502,7 @@ body {
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
+    text-align: left;
 }
 
 .summary-row {
@@ -418,6 +520,74 @@ body {
     font-size: 1.2rem;
     color: #667eea;
     font-weight: bold;
+}
+
+/* ============================================
+   PAYMENT SECTION - IMPROVED
+   ============================================ */
+
+#paymentSection {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%) !important;
+}
+
+#paymentSection h2 {
+    color: #333 !important;
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.payment-method {
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.payment-method.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.payment-method-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.payment-method-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.payment-method-desc {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.card-form {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.card-form h3 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
 /* ============================================
@@ -471,6 +641,14 @@ body {
 .confirmation-details p {
     margin: 15px 0;
     color: #333;
+}
+
+.developer-credit {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
 }
 
 /* ============================================
@@ -596,11 +774,18 @@ body {
     .header-content {
         flex-direction: column;
         gap: 10px;
-        align-items: flex-start;
     }
 
     .confirmation-container {
         padding: 40px 20px;
+    }
+
+    .payment-methods {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bus-info-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -630,5 +815,13 @@ body {
     .btn-large {
         padding: 12px 20px;
         font-size: 1rem;
+    }
+
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-container {
+        padding: 30px 15px;
     }
 }
