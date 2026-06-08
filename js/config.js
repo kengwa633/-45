@@ -169,6 +169,34 @@ const CONFIG = {
             departureTime: '07:30',
             arrivalTime: '12:00',
             availableSeats: 17
+        },
+        {
+            id: 11,
+            name: 'MOUNTAIN EXPRESS',
+            type: 'Comfort',
+            capacity: 20,
+            price: 6000,
+            seats: 20,
+            booked: [],
+            from: 'Mbeya',
+            to: 'Iringa',
+            departureTime: '08:00',
+            arrivalTime: '13:00',
+            availableSeats: 20
+        },
+        {
+            id: 12,
+            name: 'SAFARI CONNECT',
+            type: 'Standard',
+            capacity: 20,
+            price: 5500,
+            seats: 20,
+            booked: [10],
+            from: 'Arusha',
+            to: 'Dar es Salaam',
+            departureTime: '09:00',
+            arrivalTime: '18:00',
+            availableSeats: 19
         }
     ],
 
@@ -199,7 +227,7 @@ const CONFIG = {
         bookingError: 'An error occurred. Please try again.',
         invalidEmail: 'Please enter a valid email address',
         selectBusFirst: 'Please select a bus first',
-        noBusesFound: 'No buses available for this route',
+        noBusesFound: 'We have buses available for this route. Please select one!',
         sameCityError: 'From and To cities must be different'
     },
 
