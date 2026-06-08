@@ -81,15 +81,33 @@
                         <button type="submit" class="btn btn-primary btn-large">🔍 Search Buses</button>
                     </form>
                 </div>
+            </div>
+        </section>
 
-                <!-- AVAILABLE BUSES -->
-                <div id="busesResultsCard" class="route-card hidden">
-                    <h2>Available Buses</h2>
+        <!-- BUSES SEARCH RESULTS SECTION (NEW) -->
+        <section id="busesSection" class="section">
+            <div class="route-banner">
+                <h1>✈️ Available Buses</h1>
+                <p>Select your preferred bus for your journey</p>
+            </div>
+
+            <div class="route-container">
+                <div class="route-card">
+                    <h2>Journey Details</h2>
                     <div class="route-info">
-                        <p><strong>Route:</strong> <span id="routeInfo"></span></p>
-                        <p><strong>Date:</strong> <span id="dateInfo"></span></p>
+                        <p><strong>From:</strong> <span id="searchResultsFrom"></span></p>
+                        <p><strong>To:</strong> <span id="searchResultsTo"></span></p>
+                        <p><strong>Date:</strong> <span id="searchResultsDate"></span></p>
                     </div>
-                    <div id="busesResults" class="buses-list"></div>
+                </div>
+
+                <div class="route-card">
+                    <h2>Available Buses</h2>
+                    <div id="searchResultsList" class="buses-list"></div>
+                </div>
+
+                <div class="route-card" style="text-align: center;">
+                    <button class="btn btn-secondary btn-large" onclick="app.backToRoute()" style="width: 100%; max-width: 300px;">⬅️ Back to Search</button>
                 </div>
             </div>
         </section>
@@ -100,7 +118,7 @@
             <header class="app-header">
                 <div class="header-content">
                     <h1>Select Your Seat</h1>
-                    <button class="btn btn-secondary btn-small" onclick="app.backToRoute()">Back to Routes</button>
+                    <button class="btn btn-secondary btn-small" onclick="app.backToBuses()">Back to Buses</button>
                 </div>
                 <div class="user-info">
                     <span id="userDisplay"></span>

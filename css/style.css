@@ -119,6 +119,14 @@ body {
     padding: 20px;
 }
 
+#busesSection {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    overflow-y: auto;
+}
+
 .route-banner {
     text-align: center;
     color: white;
@@ -138,7 +146,7 @@ body {
 
 .route-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -152,6 +160,7 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     width: 100%;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .route-card h2 {
@@ -168,10 +177,112 @@ body {
     text-align: left;
 }
 
+.route-info p {
+    margin: 10px 0;
+    font-size: 1rem;
+}
+
 .buses-list {
     display: flex;
     flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.bus-result-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.bus-result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.bus-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
     gap: 15px;
+}
+
+.bus-result-header h3 {
+    color: #333;
+    font-size: 1.5rem;
+    flex: 1;
+    text-align: left;
+}
+
+.bus-type-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.bus-result-details {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.time-info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.time-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-label {
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.time-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.time-arrow {
+    font-size: 1.5rem;
+    color: #667eea;
+}
+
+.availability-info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.seats-available {
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.price {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 /* ============================================
@@ -727,6 +838,10 @@ body {
     background: #ff9800;
 }
 
+.toast.info {
+    background: #2196F3;
+}
+
 @keyframes slideInRight {
     from {
         transform: translateX(400px);
@@ -787,6 +902,16 @@ body {
     .bus-info-grid {
         grid-template-columns: 1fr;
     }
+
+    .bus-result-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .time-info {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -823,5 +948,13 @@ body {
 
     .confirmation-container {
         padding: 30px 15px;
+    }
+
+    .route-card {
+        padding: 20px;
+    }
+
+    .bus-result-card {
+        padding: 15px;
     }
 }
