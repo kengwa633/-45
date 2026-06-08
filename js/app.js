@@ -24,7 +24,8 @@ const app = {
             price: 0,
             reference: ''
         },
-        isProcessing: false
+        isProcessing: false,
+        selectedPaymentMethod: null
     },
 
     /**
@@ -149,7 +150,7 @@ const app = {
     },
 
     /**
-     * Display available buses for route
+     * Display available buses for route in separate section
      */
     displayAvailableBuses(from, to, date) {
         const filteredBuses = CONFIG.buses.filter(bus => 
@@ -157,16 +158,17 @@ const app = {
         );
 
         if (filteredBuses.length === 0) {
-            Utils.showToast(CONFIG.messages.noBusesFound, 'warning');
-            Utils.toggleElement('busesResultsCard', false);
+            // Show at least one default bus for any route
+            this.displayDefaultBuses(from, to, date);
             return;
         }
 
-        Utils.toggleElement('busesResultsCard', true);
-        Utils.setText('routeInfo', `${from} → ${to}`);
-        Utils.setText('dateInfo', Utils.formatDate(date));
+        // Show the results on the dedicated busesSection page
+        Utils.setText('searchResultsFrom', from);
+        Utils.setText('searchResultsTo', to);
+        Utils.setText('searchResultsDate', Utils.formatDate(date));
 
-        const busesResults = Utils.getElement('busesResults');
+        const busesResults = Utils.getElement('searchResultsList');
         busesResults.innerHTML = '';
 
         filteredBuses.forEach(bus => {
@@ -200,13 +202,73 @@ const app = {
                         <span class="price">${Utils.formatCurrency(bus.price)}</span>
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="app.selectBus(${bus.id}, '${date}')">Select</button>
+                <button class="btn btn-primary" onclick="app.selectBus(${bus.id}, '${date}')">Select Bus</button>
             `;
 
             busesResults.appendChild(busItem);
         });
 
-        Utils.showToast(`Found ${filteredBuses.length} bus(es)`, 'success');
+        Utils.showSection('busesSection');
+        Utils.showToast(`Found ${filteredBuses.length} bus(es) available`, 'success');
+    },
+
+    /**
+     * Display default buses when no specific route matches
+     */
+    displayDefaultBuses(from, to, date) {
+        Utils.setText('searchResultsFrom', from);
+        Utils.setText('searchResultsTo', to);
+        Utils.setText('searchResultsDate', Utils.formatDate(date));
+
+        // Get the first bus as default and modify its route
+        const defaultBuses = CONFIG.buses.slice(0, 3).map(bus => ({
+            ...bus,
+            from: from,
+            to: to
+        }));
+
+        const busesResults = Utils.getElement('searchResultsList');
+        busesResults.innerHTML = '';
+
+        defaultBuses.forEach(bus => {
+            const busItem = document.createElement('div');
+            busItem.className = 'bus-result-card';
+            const duration = Utils.calculateDuration(bus.departureTime, bus.arrivalTime);
+            
+            busItem.innerHTML = `
+                <div class="bus-result-header">
+                    <h3>${bus.name}</h3>
+                    <span class="bus-type-badge">${bus.type}</span>
+                </div>
+                <div class="bus-result-details">
+                    <div class="time-info">
+                        <div class="time-item">
+                            <span class="time-label">Departure</span>
+                            <span class="time-value">${bus.departureTime}</span>
+                        </div>
+                        <div class="time-arrow">→</div>
+                        <div class="time-item">
+                            <span class="time-label">Arrival</span>
+                            <span class="time-value">${bus.arrivalTime}</span>
+                        </div>
+                        <div class="time-item">
+                            <span class="time-label">Duration</span>
+                            <span class="time-value">${duration}</span>
+                        </div>
+                    </div>
+                    <div class="availability-info">
+                        <span class="seats-available">👥 ${bus.availableSeats}/${bus.capacity} Seats Available</span>
+                        <span class="price">${Utils.formatCurrency(bus.price)}</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="app.selectBus(${bus.id}, '${date}')">Select Bus</button>
+            `;
+
+            busesResults.appendChild(busItem);
+        });
+
+        Utils.showSection('busesSection');
+        Utils.showToast(`Showing available buses for your journey`, 'success');
     },
 
     /**
@@ -222,7 +284,7 @@ const app = {
 
         Utils.setText('selectedBusTitle', `${bus.name}`);
         Utils.setText('busType', bus.type);
-        Utils.setText('busRoute', `${bus.from} → ${bus.to}`);
+        Utils.setText('busRoute', `${this.state.route.from} → ${this.state.route.to}`);
         Utils.setText('busDepart', bus.departureTime);
         Utils.setText('busArrival', bus.arrivalTime);
         const duration = Utils.calculateDuration(bus.departureTime, bus.arrivalTime);
@@ -309,9 +371,45 @@ const app = {
 
         Utils.toggleElement('summaryCard', false);
         Utils.toggleElement('paymentSection', true);
+        Utils.toggleElement('cardFormContainer', true);
+        Utils.toggleElement('mobileMoneyFormContainer', false);
 
         Utils.log('Proceeding to payment', 'info');
-        Utils.showToast('Please enter payment details', 'warning');
+        Utils.showToast('Please select a payment method', 'info');
+    },
+
+    /**
+     * Select payment method
+     */
+    selectPaymentMethod(method, element) {
+        this.state.selectedPaymentMethod = method;
+
+        // Remove selected class from all payment methods
+        document.querySelectorAll('.payment-method').forEach(el => {
+            el.classList.remove('selected');
+        });
+
+        // Add selected class to clicked element
+        element.classList.add('selected');
+
+        // Show/hide forms based on method
+        if (method === 'card') {
+            Utils.toggleElement('cardFormContainer', true);
+            Utils.toggleElement('mobileMoneyFormContainer', false);
+            Utils.showToast('Enter your card details', 'info');
+        } else {
+            Utils.toggleElement('cardFormContainer', false);
+            Utils.toggleElement('mobileMoneyFormContainer', true);
+            
+            const methodNames = {
+                'mpesa': 'M-Pesa',
+                'tigopesa': 'Tigo Pesa',
+                'airtel': 'Airtel Money'
+            };
+            
+            Utils.setText('mobileMoneyTitle', `Enter your ${methodNames[method]} number`);
+            Utils.showToast(`Ready for ${methodNames[method]} payment`, 'info');
+        }
     },
 
     /**
@@ -322,6 +420,23 @@ const app = {
 
         if (this.state.isProcessing) return;
 
+        // Check if payment method is selected
+        if (!this.state.selectedPaymentMethod) {
+            Utils.showToast('Please select a payment method', 'error');
+            return;
+        }
+
+        if (this.state.selectedPaymentMethod === 'card') {
+            this.processCardPayment();
+        } else {
+            this.processMobileMoneyPayment();
+        }
+    },
+
+    /**
+     * Process card payment
+     */
+    processCardPayment() {
         const cardName = Utils.getInputValue('cardName');
         const cardNumber = Utils.getInputValue('cardNumber');
         const cardExpiry = Utils.getInputValue('cardExpiry');
@@ -344,6 +459,33 @@ const app = {
 
         if (!Utils.isValidCVV(cardCVV)) {
             Utils.showToast('Please enter a valid CVV', 'error');
+            return;
+        }
+
+        this.state.isProcessing = true;
+        Utils.showLoader();
+        Utils.showToast(CONFIG.messages.paymentProcessing, 'warning');
+
+        setTimeout(() => {
+            this.completeBooking();
+            this.state.isProcessing = false;
+            Utils.hideLoader();
+        }, 2000);
+    },
+
+    /**
+     * Process mobile money payment
+     */
+    processMobileMoneyPayment() {
+        const mobilePhone = Utils.getInputValue('mobilePhone');
+
+        if (!mobilePhone) {
+            Utils.showToast('Please enter your phone number', 'error');
+            return;
+        }
+
+        if (!/^\d{10}$/.test(mobilePhone.replace(/\D/g, ''))) {
+            Utils.showToast('Please enter a valid phone number', 'error');
             return;
         }
 
@@ -403,12 +545,21 @@ const app = {
             price: 0,
             reference: ''
         };
+        this.state.selectedPaymentMethod = null;
 
-        Utils.clearInputs(['cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
+        Utils.clearInputs(['cardName', 'cardNumber', 'cardExpiry', 'cardCVV', 'mobilePhone']);
         Utils.toggleElement('summaryCard', false);
         Utils.toggleElement('paymentSection', false);
         Utils.showSection('routeSection');
         Utils.showToast('Back to route selection', 'success');
+    },
+
+    /**
+     * Back to buses results
+     */
+    backToBuses() {
+        Utils.showSection('busesSection');
+        Utils.showToast('Back to bus selection', 'success');
     },
 
     /**
@@ -419,11 +570,11 @@ const app = {
             user: this.state.user,
             route: { from: '', to: '', date: '' },
             booking: { busId: null, busName: '', seatNumber: null, price: 0, reference: '' },
-            isProcessing: false
+            isProcessing: false,
+            selectedPaymentMethod: null
         };
 
-        Utils.clearInputs(['fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
-        Utils.toggleElement('busesResultsCard', false);
+        Utils.clearInputs(['fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV', 'mobilePhone']);
         Utils.toggleElement('summaryCard', false);
         Utils.toggleElement('paymentSection', false);
         Utils.showSection('routeSection');
@@ -439,10 +590,11 @@ const app = {
                 user: { name: '', email: '' },
                 route: { from: '', to: '', date: '' },
                 booking: { busId: null, busName: '', seatNumber: null, price: 0, reference: '' },
-                isProcessing: false
+                isProcessing: false,
+                selectedPaymentMethod: null
             };
 
-            Utils.clearInputs(['username', 'email', 'fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV']);
+            Utils.clearInputs(['username', 'email', 'fromLocation', 'toLocation', 'travelDate', 'cardName', 'cardNumber', 'cardExpiry', 'cardCVV', 'mobilePhone']);
             Utils.showSection('loginSection');
             Utils.log('User logged out', 'info');
             Utils.showToast('Logged out successfully', 'success');
